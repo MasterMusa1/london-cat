@@ -29,6 +29,23 @@
             z-index: -1;
         }
 
+        /* Fallback Message */
+        .video-fallback {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+            color: #d1d5db;
+            text-align: center;
+            z-index: -1;
+            display: none;
+        }
+
         /* Header Section */
         .header {
             position: fixed;
@@ -41,7 +58,6 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: linear-gradient(to right bottom, rgba(255, 111, 97, 0.5), rgba(0, 0, 0, 0.5));
             z-index: 1;
         }
 
@@ -356,10 +372,12 @@
     </style>
 </head>
 <body>
-    <video autoplay loop id="video-background">
+    <video autoplay loop muted id="video-background">
         <source src="https://i.imgur.com/WRXTJPP.mp4" type="video/mp4">
-        Your browser does not support the video tag.
     </video>
+    <div class="video-fallback">
+        <p>Video failed to load. Please check your connection or browser compatibility.</p>
+    </div>
 
     <div class="initial-popup" id="initial-popup">
         <div class="popup-content">
@@ -548,7 +566,7 @@
     </div>
 
     <footer class="footer">
-        <p>Contact address: <span class="copyable" onclick="copyToClipboard('Soon')">Soon</span></p>
+        <p>Contact address: <span class="copyable" onclick="copyToClipboard('Soon')">(Soon)</span></p>
         <div class="social-links">
             <a href="#"><i class="fab fa-telegram"></i></a>
             <a href="#"><i class="fab fa-x-twitter"></i></a>
@@ -558,6 +576,12 @@
     <script>
         function closeInitialPopup() {
             document.getElementById('initial-popup').style.display = 'none';
+            // Enable video sound after user interaction
+            const video = document.getElementById('video-background');
+            video.muted = false;
+            video.play().catch(error => {
+                console.error('Video playback failed:', error.message);
+            });
         }
 
         function toggleNav() {
@@ -601,11 +625,11 @@
 
         document.getElementById('burger').addEventListener('click', toggleNav);
 
-        // Ensure video audio plays on load
+        // Attempt initial video playback (muted)
         const video = document.getElementById('video-background');
-        video.muted = false;
         video.play().catch(error => {
-            console.log('Autoplay with sound was prevented:', error);
+            console.error('Initial video playback failed:', error.message);
+            document.querySelector('.video-fallback').style.display = 'flex';
         });
     </script>
 </body>
