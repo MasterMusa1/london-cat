@@ -145,24 +145,28 @@
             right: 20px;
             z-index: 101;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 60px; /* Increased size */
+            height: 60px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            padding: 10px;
+            padding: 12px;
         }
 
         .burger div {
             width: 100%;
-            height: 4px;
-            background: #fff;
+            height: 6px; /* Increased line thickness */
+            background: linear-gradient(to right, #ff6f61, #ff8a80); /* Gradient color */
             transition: all 0.3s;
-            border-radius: 2px;
+            border-radius: 3px;
+        }
+
+        .burger:hover div {
+            background: linear-gradient(to right, #ff8a80, #ffb3a7); /* Lighter gradient on hover */
         }
 
         .burger.active .line1 {
-            transform: rotate(45deg) translate(5px, 5px);
+            transform: rotate(45deg) translate(8px, 8px); /* Adjusted for larger size */
         }
 
         .burger.active .line2 {
@@ -170,7 +174,7 @@
         }
 
         .burger.active .line3 {
-            transform: rotate(-45deg) translate(7px, -7px);
+            transform: rotate(-45deg) translate(10px, -10px); /* Adjusted for larger size */
         }
 
         /* Navigation Overlay */
