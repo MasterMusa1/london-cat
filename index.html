@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>London Cat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            color: #d1d5db; /* text-gray-300 */
+        }
+
+        /* Video Background */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Header Section */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(to right bottom, rgba(255, 111, 97, 0.5), rgba(0, 0, 0, 0.5));
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            background-image: linear-gradient(to right, #ff6f61, #ff8a80);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            color: #d1d5db; /* text-gray-300 */
+        }
+
+        /* Initial Popup */
+        .initial-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right bottom, rgba(255, 111, 97, 0.7), rgba(50, 50, 100, 0.7));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .popup-content {
+            background: linear-gradient(to right bottom, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
+            padding: 30px;
+            border-radius: 1rem; /* rounded-xl */
+            text-align: center;
+            color: #d1d5db; /* text-gray-300 */
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 111, 97, 0.5);
+            border: 1px solid #ff6f61;
+            backdrop-filter: blur(4px); /* backdrop-blur-sm */
+        }
+
+        .popup-content h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            background-image: linear-gradient(to right, #ff6f61, #ff8a80);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+
+        .popup-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .popup-content button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff6f61, #ff8a80);
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 20px;
+        }
+
+        .popup-content button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Burger Menu */
+        .burger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            padding: 10px;
+        }
+
+        .burger div {
+            width: 100%;
+            height: 4px;
+            background: #fff;
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .burger.active .line1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger.active .line2 {
+            opacity: 0;
+        }
+
+        .burger.active .line3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Navigation Overlay */
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right bottom, rgba(50, 50, 100, 0.9), rgba(0, 0, 0, 0.9));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.3s;
+            z-index: 100;
+        }
+
+        .nav-overlay.active {
+            left: 0;
+        }
+
+        .nav-overlay ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .nav-overlay ul li {
+            margin: 20px 0;
+        }
+
+        .nav-overlay ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-overlay ul li a:hover {
+            color: #ff8a80;
+        }
+
+        /* Content Popups */
+        .content-popup {
+            position: fixed;
+            top: 0;
+            left: 100%;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: left 0.3s;
+            z-index: 100;
+        }
+
+        .content-popup.active {
+            left: 0;
+        }
+
+        /* Unique Overlays for Each Section */
+        #about-popup {
+            background: linear-gradient(to right bottom, rgba(29, 78, 216, 0.5), rgba(59, 130, 246, 0.5));
+        }
+
+        #tokenomics-popup {
+            background: linear-gradient(to right bottom, rgba(202, 138, 4, 0.5), rgba(234, 179, 8, 0.5));
+        }
+
+        #why-buy-popup {
+            background: linear-gradient(to right bottom, rgba(107, 33, 168, 0.5), rgba(147, 51, 234, 0.5));
+        }
+
+        #how-to-buy-popup {
+            background: linear-gradient(to right bottom, rgba(21, 128, 61, 0.5), rgba(34, 197, 94, 0.5));
+        }
+
+        #meme-gallery-popup {
+            background: linear-gradient(to right bottom, rgba(194, 65, 12, 0.5), rgba(249, 115, 22, 0.5));
+        }
+
+        #social-popup {
+            background: linear-gradient(to right bottom, rgba(219, 39, 119, 0.5), rgba(236, 72, 153, 0.5));
+        }
+
+        /* Section Content Styling */
+        .section-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem; /* gap-4 */
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .section-content {
+                grid-template-columns: repeat(3, 1fr); /* sm:grid-cols-3 */
+                gap: 2rem; /* sm:gap-8 */
+            }
+        }
+
+        .section-item {
+            background: linear-gradient(to right bottom, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
+            padding: 15px;
+            border-radius: 1rem; /* rounded-xl */
+            border: 1px solid #ff6f61;
+            backdrop-filter: blur(4px); /* backdrop-blur-sm */
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-item:hover {
+            transform: scale(1.02);
+        }
+
+        .section-item .emoji {
+            font-size: 2rem;
+            color: #ff6f61;
+        }
+
+        .section-item h3 {
+            font-size: 1.25rem;
+            background-image: linear-gradient(to right, #ff6f61, #ff8a80);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+
+        .section-item p {
+            font-size: 1rem;
+            color: #d1d5db; /* text-gray-300 */
+        }
+
+        /* Meme Gallery Images */
+        .section-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            border: 1px solid #ff6f61;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #ff8a80;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 0;
+            background: linear-gradient(to right bottom, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8));
+            border-top: 1px solid #ff6f61;
+            backdrop-filter: blur(4px); /* backdrop-blur-sm */
+            text-align: center;
+            z-index: 2;
+        }
+
+        .footer p {
+            font-size: 1rem;
+            color: #d1d5db; /* text-gray-300 */
+        }
+
+        .footer .copyable {
+            background-image: linear-gradient(to right, #ff6f61, #ff8a80);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .footer .copyable:hover {
+            text-decoration: underline;
+        }
+
+        .footer .social-links {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop id="video-background">
+        <source src="https://i.imgur.com/WRXTJPP.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="initial-popup" id="initial-popup">
+        <div class="popup-content">
+            <h2>Are you ready to go on to London?</h2>
+            <button onclick="closeInitialPopup()">Go</button>
+        </div>
+    </div>
+
+    <div class="burger" id="burger">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+    </div>
+
+    <div class="nav-overlay" id="nav-overlay">
+        <ul>
+            <li><a onclick="showContent('about')">About</a></li>
+            <li><a onclick="showContent('tokenomics')">Tokenomics</a></li>
+            <li><a onclick="showContent('why-buy')">Why Buy</a></li>
+            <li><a onclick="showContent('how-to-buy')">How to Buy</a></li>
+            <li><a onclick="showContent('meme-gallery')">Meme Gallery</a></li>
+            <li><a onclick="showContent('social')">Social</a></li>
+        </ul>
+    </div>
+
+    <div class="header" id="home">
+        <h1>London Cat</h1>
+        <p>Discover the Charm of London's Most Adventurous Feline</p>
+    </div>
+
+    <div class="content-popup" id="about-popup">
+        <div class="popup-content">
+            <h2>About</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <i class="fas fa-cat"></i>
+                    <h3>London's Feline</h3>
+                    <p>Meet London's most adventurous feline! This whiskered wanderer takes you on a journey through the charming streets of London.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-paw"></i>
+                    <h3>Irresistible Charm</h3>
+                    <p>Purring 'I will go London' with an irresistible charm, join this kitty's quest to discover London's wonders.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-heart"></i>
+                    <h3>Cat Sensation</h3>
+                    <p>Embark on a delightful adventure, paw in paw, with the internet's most talked-about cat sensation!</p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('about-popup')">Close</button>
+        </div>
+    </div>
+
+    <div class="content-popup" id="tokenomics-popup">
+        <div class="popup-content">
+            <h2>Tokenomics</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <i class="fas fa-coins"></i>
+                    <h3>Total Supply</h3>
+                    <p>One billion tokens, creating a robust foundation for our project.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-water"></i>
+                    <h3>Liquidity Burn</h3>
+                    <p>One percent liquidity burn mechanism ensures long-term stability.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-percentage"></i>
+                    <h3>Tax Rate</h3>
+                    <p>Zero percent tax rate for a seamless user experience.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-bullhorn"></i>
+                    <h3>Creator Fees</h3>
+                    <p>One hundred percent of creator fees dedicated to marketing efforts.</p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('tokenomics-popup')">Close</button>
+        </div>
+    </div>
+
+    <div class="content-popup" id="why-buy-popup">
+        <div class="popup-content">
+            <h2>Why Buy</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <i class="fas fa-laugh"></i>
+                    <h3>Memes</h3>
+                    <p>Our project celebrates the power of memes to bring joy and engagement.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Growth</h3>
+                    <p>Focused on fostering long-term growth for a sustainable future.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <h3>Community & Charity</h3>
+                    <p>Builds a vibrant community with proceeds supporting cat charities.</p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('why-buy-popup')">Close</button>
+        </div>
+    </div>
+
+    <div class="content-popup" id="how-to-buy-popup">
+        <div class="popup-content">
+            <h2>How to Buy</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <i class="fas fa-wallet"></i>
+                    <h3>Step 1</h3>
+                    <p>Create a wallet with Phantom.App.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Step 2</h3>
+                    <p>Buy some SOL from a reputable exchange.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Step 3</h3>
+                    <p>Swap your SOL for our token using a decentralized exchange like Jupiter or pump.swap.</p>
+                </div>
+                <div class="section-item">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Step 4</h3>
+                    <p>You should see your tokens in your wallet. Easy as that!</p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('how-to-buy-popup')">Close</button>
+        </div>
+    </div>
+
+    <div class="content-popup" id="meme-gallery-popup">
+        <div class="popup-content">
+            <h2>Meme Gallery</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <span class="emoji">🐾</span>
+                    <h3>My visit to London</h3>
+                    <img src="https://i.imgur.com/cjEJ4AU.jpeg" alt="London Cat at London Tower">
+                    <p>A pawsome adventure at the London tower in a tour bus.</p>
+                </div>
+                <div class="section-item">
+                    <span class="emoji">🐾</span>
+                    <h3>My visit to London</h3>
+                    <img src="https://i.imgur.com/PA6Par0.jpeg" alt="London Cat at London Eye">
+                    <p>A pawsome adventure at London eye</p>
+                </div>
+                <div class="section-item">
+                    <span class="emoji">🐾</span>
+                    <h3>My visit to London</h3>
+                    <img src="https://i.imgur.com/OgNIhSJ.jpeg" alt="London Cat at London Bridge">
+                    <p>A pawsome adventure at the London Bridge</p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('meme-gallery-popup')">Close</button>
+        </div>
+    </div>
+
+    <div class="content-popup" id="social-popup">
+        <div class="popup-content">
+            <h2>Social</h2>
+            <div class="section-content">
+                <div class="section-item">
+                    <i class="fab fa-twitter"></i>
+                    <h3>Twitter</h3>
+                    <p><a href="#" style="color: #d1d5db;">Join us on Twitter</a></p>
+                </div>
+                <div class="section-item">
+                    <i class="fab fa-discord"></i>
+                    <h3>Discord</h3>
+                    <p><a href="#" style="color: #d1d5db;">Connect on Discord</a></p>
+                </div>
+                <div class="section-item">
+                    <i class="fab fa-telegram"></i>
+                    <h3>Telegram</h3>
+                    <p><a href="#" style="color: #d1d5db;">Chat on Telegram</a></p>
+                </div>
+            </div>
+            <button onclick="closeContentPopup('social-popup')">Close</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Contact address: <span class="copyable" onclick="copyToClipboard('Soon')">Soon</span></p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        function closeInitialPopup() {
+            document.getElementById('initial-popup').style.display = 'none';
+        }
+
+        function toggleNav() {
+            const nav = document.getElementById('nav-overlay');
+            const burger = document.getElementById('burger');
+            const anyPopupActive = Array.from(document.querySelectorAll('.content-popup')).some(popup => popup.classList.contains('active'));
+
+            if (anyPopupActive) {
+                closeAllPopups();
+                nav.classList.add('active');
+                burger.classList.add('active');
+            } else {
+                nav.classList.toggle('active');
+                burger.classList.toggle('active');
+            }
+        }
+
+        function showContent(popupId) {
+            closeAllPopups();
+            document.getElementById(`${popupId}-popup`).classList.add('active');
+            document.getElementById('nav-overlay').classList.remove('active');
+            document.getElementById('burger').classList.remove('active');
+        }
+
+        function closeContentPopup(popupId) {
+            document.getElementById(popupId).classList.remove('active');
+        }
+
+        function closeAllPopups() {
+            const popups = document.querySelectorAll('.content-popup');
+            popups.forEach(popup => popup.classList.remove('active'));
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        document.getElementById('burger').addEventListener('click', toggleNav);
+
+        // Ensure video audio plays on load
+        const video = document.getElementById('video-background');
+        video.muted = false;
+        video.play().catch(error => {
+            console.log('Autoplay with sound was prevented:', error);
+        });
+    </script>
+</body>
+</html>
